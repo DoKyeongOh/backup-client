@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>backup client</title>
+</head>
+<body>
+    <h1>저장소 생성 완료!!</h1>
+    <button onclick="location.href='/'">메인 페이지로 이동하기</button>
+    <ul>
+        <li th:each="file : ${files}">
+            <span th:text="${file.path}"></span>
+        </li>
+    </ul>
+</body>
+</html>
