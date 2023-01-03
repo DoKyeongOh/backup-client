@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>backup client</title>
+</head>
+<body>
+    <h1>메인 페이지</h1> <br>
+    <h2>행동을 선택해주세요.</h2>
+    <h3>1. 저장소 생성하기</h3>
+    <form action="/storage" method="post">
+        <input type="text" name="rootDirPath" style="width: 20%" placeholder="저장할 곳의 로컬 루트 디렉토리 경로를 입력해주세요." />
+        <button type="submit">저장소 생성하기</button>
+    </form>
+
+    <br>
+    <h3>2. 저장소 조회하기</h3>
+    <form action="/storage" method="get">
+        <input type="text" name="rootDirPath" style="width: 20%" placeholder="조회할 저장소의 루트 디렉토리 경로를 입력해주세요." />
+        <button type="submit">저장소 조회</button>
+    </form>
+
+    <br><br>
+
+    <h4 th:text="${errorMsg}"></h4>
+
+</body>
+</html>
