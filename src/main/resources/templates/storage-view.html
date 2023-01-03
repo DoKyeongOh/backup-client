@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>backup client</title>
+</head>
+<body>
+    <h1>저장소 조회 페이지</h1>
+
+    <ul>
+        <h3>수정되지 않은 파일</h3>
+        <ul th:each="filename : ${filenames.sameFileNames}">
+            <li th:text="${filename}"></li>
+        </ul> <br>
+        <h3>수정된 파일</h3>
+        <ul th:each="filename : ${filenames.modifiedFilesNames}">
+            <li th:text="${filename}"></li>
+        </ul> <br>
+        <h3>추가된 파일</h3>
+        <ul th:each="filename : ${filenames.addedFileNames}">
+            <li th:text="${filename}"></li>
+        </ul> <br>
+        <h3>삭제된 파일</h3>
+        <ul th:each="filename : ${filenames.deletedFileNames}">
+            <li th:text="${filename}"></li>
+        </ul> <br>
+    </ul>
+
+    <button onclick="location.href='/'">메인 페이지로 돌아가기</button>
+    <br><br>
+
+    <form method="post" action="/storage">
+        <input type="hidden" name="_method" value="PUT" />
+        <input type="hidden" name="rootDirPath" th:value="${rootDirPath}"/>
+        <button type="submit">변경사항 적용하기</button>
+    </form>
+    <br>
+
+    <form method="get" action="/storage/files">
+        <input type="hidden" name="rootDirPath" th:value="${rootDirPath}"/>
+        <button type="submit">로컬 저장소를 백업본으로 되돌리기</button>
+    </form>
+
+</body>
+</html>
