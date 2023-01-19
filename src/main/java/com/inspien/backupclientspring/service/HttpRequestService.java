@@ -32,9 +32,17 @@ public class HttpRequestService {
 
 
         HttpStatus status;
+    private Map<String, CustomFile> convertCustomFileMap(JsonNode jsonBody) {
         try {
+            ObjectMapper mapper = new ObjectMapper();
+            CustomFile[] customFiles = mapper.readValue(jsonBody.toString(), CustomFile[].class);
+            Map<String, CustomFile> customFileMap = new HashMap<>();
+            for (CustomFile rf : customFiles) {
+                customFileMap.put(rf.getFilename(), rf);
+            }
+            return customFileMap;
         } catch (Exception e) {
-            throw e;
+            throw new CustomException(ErrorCode.CAN_NOT_PARSE_RESPONSE_DATA);
         }
     }
 
