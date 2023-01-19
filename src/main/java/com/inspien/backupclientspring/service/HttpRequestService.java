@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,6 @@ public class HttpRequestService {
 
     @Autowired
     RestTemplate restTemplate;
-    private String storageInquiryUrl = "http://localhost:8080/storage";
 
     public void sendNewStorageRequest(List<CustomFile> customFiles, String rootDirPath) {
         Map<String, Object> param = new HashMap<>();
@@ -30,8 +30,14 @@ public class HttpRequestService {
         sendWithBody(param, ResourceUrl.STORAGE, HttpMethod.POST);
     }
 
+    public Map<String, CustomFile> sendStorageInquiryRequest(String rootDirPath) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ResourceUrl.STORAGE)
+                .queryParam("rootDirPath", rootDirPath);
 
-        HttpStatus status;
+        ResponseEntity<JsonNode> entity = send(builder.build().toString(), HttpMethod.GET);
+        return convertCustomFileMap(entity.getBody());
+    }
+
     private Map<String, CustomFile> convertCustomFileMap(JsonNode jsonBody) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -46,21 +52,9 @@ public class HttpRequestService {
         }
     }
 
-    public Map<String, CustomFile> sendStorageInquiryRequest(String rootDirPath) {
-        try {
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(storageInquiryUrl)
-                    .queryParam("rootDirPath", rootDirPath);
 
-            ResponseEntity<JsonNode> getForEntity
-                    = restTemplate.getForEntity(builder.build().toString(), JsonNode.class, rootDirPath);
-            throwCustomException(getForEntity.getStatusCode());
 
-            ObjectMapper mapper = new ObjectMapper();
-            CustomFile[] customFiles = mapper.readValue(getForEntity.getBody().toString(), CustomFile[].class);
 
-            Map<String, CustomFile> remoteFileMap = new HashMap<>();
-            for (CustomFile rf : customFiles) {
-                remoteFileMap.put(rf.getFilename(), rf);
             }
             return remoteFileMap;
         } catch (Exception e) {
