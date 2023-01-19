@@ -67,8 +67,18 @@ public class HttpRequestService {
     }
 
     public void sendUpdateStorageRequest(ClassifiedCustomFiles classifiedCustomFiles) {
+    public ResponseEntity<JsonNode> sendWithBody(Object body, String url, HttpMethod method) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> httpEntity = new HttpEntity<>(body, header);
+        try {
+            ResponseEntity<JsonNode> entity = restTemplate.exchange(url, method, httpEntity, JsonNode.class);
+            throwCustomException(entity.getStatusCode());
+            return entity;
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.CAN_NOT_CONNECT);
+        }
+    }
 
         HttpEntity<ClassifiedCustomFiles> httpEntity
                 = new HttpEntity<>(classifiedCustomFiles, header);
