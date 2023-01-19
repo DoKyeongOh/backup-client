@@ -52,6 +52,9 @@ public class HttpRequestService {
         }
     }
 
+    public void sendUpdateStorageRequest(ClassifiedCustomFiles classifiedCustomFiles) {
+        sendWithBody(classifiedCustomFiles, ResourceUrl.STORAGE, HttpMethod.PUT);
+    }
 
 
 
@@ -62,7 +65,6 @@ public class HttpRequestService {
         }
     }
 
-    public void sendUpdateStorageRequest(ClassifiedCustomFiles classifiedCustomFiles) {
     public ResponseEntity<JsonNode> sendWithBody(Object body, String url, HttpMethod method) {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
@@ -75,9 +77,6 @@ public class HttpRequestService {
             throw new CustomException(ErrorCode.CAN_NOT_CONNECT);
         }
     }
-
-        HttpEntity<ClassifiedCustomFiles> httpEntity
-                = new HttpEntity<>(classifiedCustomFiles, header);
 
     public ResponseEntity<JsonNode> send(String url, HttpMethod method) {
         HttpHeaders header = new HttpHeaders();
