@@ -21,24 +21,18 @@ public class HttpRequestService {
 
     @Autowired
     RestTemplate restTemplate;
-    private String storageCreationUrl = "http://localhost:8080/storage";
     private String storageInquiryUrl = "http://localhost:8080/storage";
 
     public void sendNewStorageRequest(List<CustomFile> customFiles, String rootDirPath) {
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.APPLICATION_JSON);
-
         Map<String, Object> param = new HashMap<>();
         param.put("files", customFiles);
         param.put("rootDirPath", rootDirPath);
+        sendWithBody(param, ResourceUrl.STORAGE, HttpMethod.POST);
+    }
 
-        HttpEntity<Map<String, Object>> httpEntity
-                = new HttpEntity<>(param, header);
 
         HttpStatus status;
         try {
-            ResponseEntity<JsonNode> postForEntity = restTemplate.postForEntity(storageCreationUrl, httpEntity, JsonNode.class);
-            throwCustomException(postForEntity.getStatusCode());
         } catch (Exception e) {
             throw e;
         }
