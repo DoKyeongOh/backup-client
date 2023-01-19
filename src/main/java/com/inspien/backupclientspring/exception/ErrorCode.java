@@ -13,6 +13,7 @@ public enum ErrorCode {
 
     // 통신 오류
     CAN_NOT_CONNECT("서버에 연결할 수 없는 상태입니다."),
+    CAN_NOT_PARSE_RESPONSE_DATA("서버의 응답 데이터를 해석할 수 없습니다."),
 
     // 저장소 오류
     STORAGE_IS_ALREADY_EXIST("저장소가 이미 존재합니다."),
