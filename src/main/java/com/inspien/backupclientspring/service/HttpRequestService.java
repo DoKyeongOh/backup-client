@@ -58,10 +58,17 @@ public class HttpRequestService {
 
 
 
+    private List<String> convertFilenameList(JsonNode jsonBody) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String[] filenames = mapper.readValue(jsonBody.toString(), String[].class);
+            List<String> filenameList = new ArrayList<>();
+            for (String filename : filenameList) {
+                filenameList.add(filename);
             }
-            return remoteFileMap;
+            return filenameList;
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.CAN_NOT_CONNECT);
+            throw new CustomException(ErrorCode.CAN_NOT_PARSE_RESPONSE_DATA);
         }
     }
 
