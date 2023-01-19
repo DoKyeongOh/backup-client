@@ -56,7 +56,13 @@ public class HttpRequestService {
         sendWithBody(classifiedCustomFiles, ResourceUrl.STORAGE, HttpMethod.PUT);
     }
 
+    public List<String> sendFilenameInquiryRequest(String rootDirPath) {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(ResourceUrl.STORAGE)
+                .queryParam("rootDirPath", rootDirPath);
 
+        ResponseEntity<JsonNode> entity = send(builder.build().toString(), HttpMethod.GET);
+        return convertFilenameList(entity.getBody());
+    }
 
     private List<String> convertFilenameList(JsonNode jsonBody) {
         try {
