@@ -83,14 +83,16 @@ public class HttpRequestService {
         HttpEntity<ClassifiedCustomFiles> httpEntity
                 = new HttpEntity<>(classifiedCustomFiles, header);
 
+    public ResponseEntity<JsonNode> send(String url, HttpMethod method) {
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Object> httpEntity = new HttpEntity<>(header);
         try {
-            ResponseEntity<JsonNode> putEntity =
-                    restTemplate.exchange(storageCreationUrl, HttpMethod.PUT, httpEntity, JsonNode.class);
-            if (putEntity.getStatusCode() != HttpStatus.OK) {
-                throw new CustomException(ErrorCode.STORAGE_UPDATE_FAILURE);
-            }
+            ResponseEntity<JsonNode> entity = restTemplate.exchange(url, method, httpEntity, JsonNode.class);
+            throwCustomException(entity.getStatusCode());
+            return entity;
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.STORAGE_UPDATE_FAILURE);
+            throw new CustomException(ErrorCode.CAN_NOT_CONNECT);
         }
     }
 
