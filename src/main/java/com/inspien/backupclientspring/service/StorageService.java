@@ -18,7 +18,7 @@ public class StorageService {
     DirectoryValidationService directoryValidationService;
     HttpRequestService httpRequestService;
 
-    public Map<String, CustomFile> getRemoteFiles(String rootDirPath) {
+    public Map<String, CustomFile> getRemoteFileMap(String rootDirPath) {
         directoryValidationService.validate(rootDirPath);
         Map<String, CustomFile> customFiles = httpRequestService.sendStorageInquiryRequest(rootDirPath);
         return customFiles;
@@ -26,7 +26,7 @@ public class StorageService {
 
     public void createStorage(String rootDirPath) {
         directoryValidationService.validate(rootDirPath);
-        Map<String, CustomFile> fileMap = findLocalFiles(rootDirPath, rootDirPath);
+        Map<String, CustomFile> fileMap = findLocalFileMap(rootDirPath, rootDirPath);
         List<CustomFile> customFiles = convertCustomFiles(fileMap);
         httpRequestService.sendNewStorageRequest(customFiles, rootDirPath);
     }
@@ -34,8 +34,8 @@ public class StorageService {
     public void updateStorage(String rootDirPath) {
         directoryValidationService.validate(rootDirPath);
         ClassifiedCustomFiles customFiles = new ClassifiedCustomFiles(
-                findLocalFiles(rootDirPath, rootDirPath),
-                getRemoteFiles(rootDirPath)
+                findLocalFileMap(rootDirPath, rootDirPath),
+                getRemoteFileMap(rootDirPath)
         );
         customFiles.setRootDirPath(rootDirPath);
         httpRequestService.sendUpdateStorageRequest(customFiles);
@@ -49,11 +49,11 @@ public class StorageService {
         return customFiles;
     }
 
-    public Map<String, CustomFile> findLocalFiles(String rootDirPath, String parentPath) {
+    public Map<String, CustomFile> findLocalFileMap(String rootDirPath, String parentPath) {
         Map<String, CustomFile> fileMap = new HashMap<>();
         for (File f : new File(parentPath).listFiles()) {
             if (f.isDirectory()) {
-                fileMap.putAll(findLocalFiles(rootDirPath, f.getAbsolutePath()));
+                fileMap.putAll(findLocalFileMap(rootDirPath, f.getAbsolutePath()));
             } else {
                 fileMap.put(f.getAbsolutePath(), new CustomFile(f, rootDirPath));
             }
@@ -64,15 +64,15 @@ public class StorageService {
     public ClassifiedFilenames getClassifiedFilenames(String rootDirPath) {
         directoryValidationService.validate(rootDirPath);
         ClassifiedFilenames sortedFilenames = new ClassifiedFilenames(
-                findLocalFiles(rootDirPath, rootDirPath),
-                getRemoteFiles(rootDirPath));
+                findLocalFileMap(rootDirPath, rootDirPath),
+                getRemoteFileMap(rootDirPath));
         return sortedFilenames;
     }
 
     public void rollbackStorage(String rootDirPath) {
-        Map<String, CustomFile> localFiles = findLocalFiles(rootDirPath, rootDirPath);
-        Map<String, CustomFile> remoteFiles = getRemoteFiles(rootDirPath);
-        for (CustomFile remoteFile : remoteFiles.values()) {
+        Map<String, CustomFile> localFiles = findLocalFileMap(rootDirPath, rootDirPath);
+        Map<String, CustomFile> remoteFileMap = getRemoteFileMap(rootDirPath);
+        for (CustomFile remoteFile : remoteFileMap.values()) {
             String filename = remoteFile.getFilename();
             if (!localFiles.containsKey(remoteFile.getFilename())) {
                 remoteFile.writeToLocalFile();
@@ -87,7 +87,7 @@ public class StorageService {
             }
         }
         for (CustomFile localFile : localFiles.values()) {
-            if (!remoteFiles.containsKey(localFile.getFilename())) {
+            if (!remoteFileMap.containsKey(localFile.getFilename())) {
                 localFile.deleteLocalFile();
             }
         }
